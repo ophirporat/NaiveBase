@@ -1,15 +1,18 @@
 import pandas as pd
-from sklearn.preprocessing import KBinsDiscretizer
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 
 
 class Preprocessing:
-    def __init__(self, path):
+    ##TODO: not all files in folder
+    def __init__(self, path, num_of_bins):
         self.attributes = {}
         self.path = path
-        self.train_df = pd.read_csv(path + "../train.csv")
+        self.train_df = pd.read_csv("train.csv")
+        self.test_df = pd.read_csv("test.csv")
+        self.num_of_bins = num_of_bins
 
     def read_structure_file(self):
-        f = open("path +/Structure.txt", "r")
+        f = open(self.path +"/Structure.txt", "r")
         line = f.readline()
         while line:
             if line.__contains__("{"):
@@ -24,12 +27,14 @@ class Preprocessing:
 
     def equal_width_partitioning(self, attribute_name):
         arr1 = self.train_df[attribute_name].values
-        m = 3
-        w = int((max(arr1) - min(arr1)) / m)
+        # arr2 = self.test_df[attribute_name].values
+        w1 = int((max(arr1) - min(arr1)) / self.num_of_bins)
+        # w2 = int((max(arr2) - min(arr2)) / self.num_of_bins)
         min1 = min(arr1)
+        # min2 = min(arr2)
         arr = []
-        for i in range(0, m + 1):
-            arr = arr + [min1 + w * i]
+        for i in range(0, self.num_of_bins + 1):
+            arr = arr + [min1 + w1 * i]
         for j in self.train_df.index:
             if self.train_df.at[j, attribute_name] <= arr[0]:
                 self.train_df.at[j, attribute_name] = 1
@@ -37,24 +42,39 @@ class Preprocessing:
                 self.train_df.at[j, attribute_name] = 2
             else:
                 self.train_df.at[j, attribute_name] = 3
+        for k in self.test_df.index:
+            if self.test_df.at[k, attribute_name] <= arr[0]:
+                self.test_df.at[k, attribute_name] = 1
+            elif arr[0] < self.test_df.at[k, attribute_name] <= arr[1]:
+                self.test_df.at[k, attribute_name] = 2
+            else:
+                self.test_df.at[k, attribute_name] = 3
         pass
 
     def simplifiy_labels(self, attribute_name):
+        self.train_df[attribute_name] = LabelEncoder().fit_transform(self.train_df[attribute_name])
+        self.test_df[attribute_name] = LabelEncoder().fit_transform(self.test_df[attribute_name])
         pass
 
     def data_preparation(self):
         for key, value in self.attributes.items():
             if key == "class":
-                continue
+                self.simplifiy_labels("class")
             if value == "numeric":
                 self.train_df[key] = self.train_df[key].fillna(self.train_df[key].mean())
+                self.test_df[key] = self.test_df[key].fillna(self.test_df[key].mean())
                 self.equal_width_partitioning(key)
 
             else:
                 self.train_df[key] = self.train_df[key].fillna(self.train_df[key].mode().iloc[0])
+                self.test_df[key] = self.test_df[key].fillna(self.test_df[key].mode().iloc[0])
                 self.simplifiy_labels(key)
+    def preprocess(self):
+        self.read_structure_file()
+        self.data_preparation()
+        self.attributes.pop("class")
 
 
-m = Preprocessing("..")
-m.read_structure_file()
-m.data_preparation()
+# m = Preprocessing("..", 2)
+# m.read_structure_file()
+# m.data_preparation()
