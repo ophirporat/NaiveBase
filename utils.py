@@ -1,6 +1,4 @@
 
-
-
 def write_to_file(path, output):
     print(output)
     pass

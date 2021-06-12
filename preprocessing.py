@@ -1,9 +1,9 @@
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from sklearn.preprocessing import LabelEncoder
 
 
 class Preprocessing:
-    ##TODO: not all files in folder
+    #  TODO: not all files in folder
     def __init__(self, path, num_of_bins):
         self.attributes = {}
         self.path = path
@@ -12,7 +12,7 @@ class Preprocessing:
         self.num_of_bins = num_of_bins
 
     def read_structure_file(self):
-        f = open(self.path +"/Structure.txt", "r")
+        f = open(self.path + "\\Structure.txt", "r")
         line = f.readline()
         while line:
             if line.__contains__("{"):
@@ -51,7 +51,7 @@ class Preprocessing:
                 self.test_df.at[k, attribute_name] = 3
         pass
 
-    def simplifiy_labels(self, attribute_name):
+    def simplify_labels(self, attribute_name):
         self.train_df[attribute_name] = LabelEncoder().fit_transform(self.train_df[attribute_name])
         self.test_df[attribute_name] = LabelEncoder().fit_transform(self.test_df[attribute_name])
         pass
@@ -59,7 +59,7 @@ class Preprocessing:
     def data_preparation(self):
         for key, value in self.attributes.items():
             if key == "class":
-                self.simplifiy_labels("class")
+                self.simplify_labels("class")
             if value == "numeric":
                 self.train_df[key] = self.train_df[key].fillna(self.train_df[key].mean())
                 self.test_df[key] = self.test_df[key].fillna(self.test_df[key].mean())
@@ -68,12 +68,12 @@ class Preprocessing:
             else:
                 self.train_df[key] = self.train_df[key].fillna(self.train_df[key].mode().iloc[0])
                 self.test_df[key] = self.test_df[key].fillna(self.test_df[key].mode().iloc[0])
-                self.simplifiy_labels(key)
+                self.simplify_labels(key)
+
     def preprocess(self):
         self.read_structure_file()
         self.data_preparation()
         self.attributes.pop("class")
-
 
 # m = Preprocessing("..", 2)
 # m.read_structure_file()

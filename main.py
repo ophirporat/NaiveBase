@@ -1,10 +1,10 @@
-
-from model.preprocessing import Preprocessing
-from model.model import Model
+from preprocessing import Preprocessing
+from model import Model
 
 if __name__ == '__main__':
-    pre = Preprocessing("", 3)
+    path = "C:\\Users\\morzw\\PycharmProjects\\NaiveBase"
+    pre = Preprocessing(path, 3)
     pre.preprocess()
-    model = Model(pre.train_df, pre.test_df,2,pre.attributes.keys())
+    model = Model(pre.train_df, pre.test_df, 2, pre.attributes.keys(), path)
     model.build_model()
     model.classify_records()

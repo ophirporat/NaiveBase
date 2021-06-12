@@ -1,6 +1,6 @@
 from sklearn.naive_bayes import MultinomialNB
 
-from model import utils
+import utils
 
 
 class Model:
