@@ -1,5 +1,9 @@
+from os import listdir
 from tkinter import *
 from tkinter import filedialog, messagebox
+
+from model import Model
+from preprocessing import Preprocessing as pr
 
 
 class NaiveBayesClassifier:
@@ -8,9 +12,9 @@ class NaiveBayesClassifier:
         master.title("Naive Bayes Classifier")
 
         self.path = StringVar()
+        self.pathStr = ""
         self.path.trace_add('write', self.turn_on_build_button)
         self.bins = IntVar()
-        # self.bins.trace_add('write', self.turn_on_build_button)
 
         self.labelPath = Label(master, text="Directory Path:")
         self.labelPath.place(x=30, y=50)
@@ -45,7 +49,7 @@ class NaiveBayesClassifier:
             self.path = ""
             return True
         try:
-            self.path = str(new_text_path)
+            self.pathStr = str(new_text_path)
             return True
         except ValueError:
             return False
@@ -56,24 +60,36 @@ class NaiveBayesClassifier:
             return True
         try:
             self.bins = int(new_text_bins)
+            self.turn_on_build_button()
             return True
         except ValueError:
             return False
 
+    # -- Validate if files are in the folder --
     def turn_on_build_button(self, *args):
-        if self.path != "" and self.bins != 0:
-            self.build_button.config(state="normal")
+        try:
+            if type(self.bins) is int and not ("Structure.txt" not in listdir(self.pathStr) or "train.csv" not in
+                                               listdir(self.pathStr) or "test.csv" not in listdir(
+                        self.pathStr)) and self.bins > 0:
+                self.build_button.config(state="normal")
+        except:
+            pass
 
     def browse_files(self):
         folder_path = filedialog.askdirectory(title="Naive Bayes Classifier")
         self.path.set(folder_path)
-        self.path = folder_path
+        self.pathStr = folder_path
 
     def build_model(self):
+        p = pr(self.pathStr, self.bins)
+        p.preprocess()
+        self.model = Model(p.train_df, p.test_df, 2, p.attributes.keys(), self.pathStr)
+        self.model.build_model()
         self.classify_button.config(state="normal")
         messagebox.showinfo("Naive Bayes Classifier", "Building classifier using train-set is done!")
 
     def classify_rec(self):
+        self.model.classify_records()
         messagebox.showinfo("Naive Bayes Classifier", "The classification was completed successfully")
 
 

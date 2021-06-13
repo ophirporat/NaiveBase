@@ -7,8 +7,8 @@ class Preprocessing:
     def __init__(self, path, num_of_bins):
         self.attributes = {}
         self.path = path
-        self.train_df = pd.read_csv("train.csv")
-        self.test_df = pd.read_csv("test.csv")
+        self.train_df = pd.read_csv(path+"\\train.csv")
+        self.test_df = pd.read_csv(path+"\\test.csv")
         self.num_of_bins = num_of_bins
 
     def read_structure_file(self):
