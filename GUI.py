@@ -11,6 +11,7 @@ class NaiveBayesClassifier:
         self.master = master
         master.title("Naive Bayes Classifier")
 
+        # -- Path and bins variables and labels --
         self.path = StringVar()
         self.pathStr = ""
         self.path.trace_add('write', self.turn_on_build_button)
@@ -44,6 +45,7 @@ class NaiveBayesClassifier:
         self.classify_button.place(x=250, y=170, width=100)
         self.classify_button.config(state="disabled")
 
+    # -- Checks if the path from register is valid --
     def validate_path(self, new_text_path):
         if not new_text_path:  # the field is being cleared
             self.path = ""
@@ -54,6 +56,7 @@ class NaiveBayesClassifier:
         except ValueError:
             return False
 
+    # -- Checks if the bins from register is valid --
     def validate_bins(self, new_text_bins):
         if not new_text_bins:  # the field is being cleared
             self.bins = 0
@@ -75,19 +78,22 @@ class NaiveBayesClassifier:
         except:
             pass
 
+    # -- Select folder from files browser --
     def browse_files(self):
         folder_path = filedialog.askdirectory(title="Naive Bayes Classifier")
         self.path.set(folder_path)
         self.pathStr = folder_path
 
+    # -- Builds the model --
     def build_model(self):
         p = pr(self.pathStr, self.bins)
         p.preprocess()
-        self.model = Model(p.train_df, p.test_df, 2, p.attributes, self.pathStr)
+        self.model = Model(p.train_df, p.test_df, 2, p.attributes, self.pathStr)  # m=1
         self.model.build_model()
         self.classify_button.config(state="normal")
         messagebox.showinfo("Naive Bayes Classifier", "Building classifier using train-set is done!")
 
+    # -- Classify the records --
     def classify_rec(self):
         self.model.classify_records()
         messagebox.showinfo("Naive Bayes Classifier", "The classification was completed successfully")

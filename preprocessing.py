@@ -3,7 +3,6 @@ from sklearn.preprocessing import LabelEncoder
 
 
 class Preprocessing:
-    #  TODO: not all files in folder
     def __init__(self, path, num_of_bins):
         self.attributes = {}
         self.path = path
@@ -11,6 +10,7 @@ class Preprocessing:
         self.test_df = pd.read_csv(path+"\\test.csv")
         self.num_of_bins = num_of_bins
 
+    # -- Reads the structure file --
     def read_structure_file(self):
         f = open(self.path + "\\Structure.txt", "r")
         line = f.readline()
@@ -25,6 +25,7 @@ class Preprocessing:
             self.attributes[attribute_name] = attribute_values
             line = f.readline()
 
+    # -- Discretization of equal width --
     def equal_width_partitioning(self, attribute_name):
         arr1 = self.train_df[attribute_name].values
         # arr2 = self.test_df[attribute_name].values
@@ -51,31 +52,30 @@ class Preprocessing:
                 self.test_df.at[k, attribute_name] = 3
         pass
 
+    # -- Encodes attribute's values --
     def simplify_labels(self, attribute_name):
         self.train_df[attribute_name] = LabelEncoder().fit_transform(self.train_df[attribute_name])
         self.test_df[attribute_name] = LabelEncoder().fit_transform(self.test_df[attribute_name])
         pass
 
+    # -- Preparing the data --
     def data_preparation(self):
         for key, value in self.attributes.items():
             if key == "class":
                 continue
-                # self.simplify_labels("class")
+            # for numeric variable fill na with mean and do equal width discretization
             if value == "numeric":
                 self.train_df[key] = self.train_df[key].fillna(self.train_df[key].mean())
                 self.test_df[key] = self.test_df[key].fillna(self.test_df[key].mean())
                 self.equal_width_partitioning(key)
-
+            # for categorical variable fill na with mode and encodes attribute's values
             else:
                 self.train_df[key] = self.train_df[key].fillna(self.train_df[key].mode().iloc[0])
                 self.test_df[key] = self.test_df[key].fillna(self.test_df[key].mode().iloc[0])
                 self.simplify_labels(key)
 
+    # -- Start preprocessing from here! --
     def preprocess(self):
         self.read_structure_file()
         self.data_preparation()
-        # self.attributes.pop("class")
-
-# m = Preprocessing("..", 2)
-# m.read_structure_file()
-# m.data_preparation()
+        self.attributes.pop("class")
