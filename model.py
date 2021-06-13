@@ -11,14 +11,17 @@ class Model:
         self.test = test[attributes]
         self.path = path
         # self.m_estimator = m_estimator
-        self.model = MultinomialNB(alpha=m_estimator)
+        self.model = MultinomialNB()
         self.trained_model = ""
 
     def build_model(self):
+        # print("self.x_train", self.x_train)
+        # print("self.y_train", self.y_train)
         self.model.fit(self.x_train, self.y_train)
         pass
 
     def classify_records(self):
+        print(self.test)
         self.y_predict = self.model.predict(self.test)
         utils.write_to_file(self.path, self.y_predict)
 

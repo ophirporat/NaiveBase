@@ -59,7 +59,8 @@ class Preprocessing:
     def data_preparation(self):
         for key, value in self.attributes.items():
             if key == "class":
-                self.simplify_labels("class")
+                continue
+                # self.simplify_labels("class")
             if value == "numeric":
                 self.train_df[key] = self.train_df[key].fillna(self.train_df[key].mean())
                 self.test_df[key] = self.test_df[key].fillna(self.test_df[key].mean())
@@ -73,7 +74,7 @@ class Preprocessing:
     def preprocess(self):
         self.read_structure_file()
         self.data_preparation()
-        self.attributes.pop("class")
+        # self.attributes.pop("class")
 
 # m = Preprocessing("..", 2)
 # m.read_structure_file()

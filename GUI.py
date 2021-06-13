@@ -83,7 +83,7 @@ class NaiveBayesClassifier:
     def build_model(self):
         p = pr(self.pathStr, self.bins)
         p.preprocess()
-        self.model = Model(p.train_df, p.test_df, 2, p.attributes.keys(), self.pathStr)
+        self.model = Model(p.train_df, p.test_df, 2, p.attributes, self.pathStr)
         self.model.build_model()
         self.classify_button.config(state="normal")
         messagebox.showinfo("Naive Bayes Classifier", "Building classifier using train-set is done!")
