@@ -1,4 +1,4 @@
-from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import CategoricalNB
 
 
 import utils
@@ -10,8 +10,7 @@ class Model:
         self.y_train = train["class"]
         self.test = test[attributes]
         self.path = path
-        self.m = m
-        self.model = GaussianNB()
+        self.model = CategoricalNB(alpha=m)
         self.trained_model = ""
 
     # -- Training the model --
