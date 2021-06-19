@@ -87,7 +87,10 @@ class NaiveBayesClassifier:
     # -- Builds the model --
     def build_model(self):
         p = pr(self.pathStr, self.bins)
-        p.preprocess()
+        message = p.preprocess()
+        if(message != "all good"):
+            messagebox.showinfo("Naive Bayes Classifier",message)
+            return
         self.model = Model(p.train_df, p.test_df, 2, p.attributes, self.pathStr)  # m=1
         self.model.build_model()
         self.classify_button.config(state="normal")

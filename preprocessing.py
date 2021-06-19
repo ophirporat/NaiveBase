@@ -6,8 +6,8 @@ class Preprocessing:
     def __init__(self, path, num_of_bins):
         self.attributes = {}
         self.path = path
-        self.train_df = pd.read_csv(path+"\\train.csv")
-        self.test_df = pd.read_csv(path+"\\test.csv")
+        self.train_df = pd.read_csv(path + "\\train.csv")
+        self.test_df = pd.read_csv(path + "\\test.csv")
         self.num_of_bins = num_of_bins
 
     # -- Reads the structure file --
@@ -76,6 +76,15 @@ class Preprocessing:
 
     # -- Start preprocessing from here! --
     def preprocess(self):
+        if len(self.train_df) == 0 or len(self.test_df) == 0:
+            return "empty data file"
         self.read_structure_file()
-        self.data_preparation()
+        for attribute in self.attributes.keys():
+            if attribute not in self.train_df or attribute not in self.test_df:
+                return "invalid data file"
+        try:
+            self.data_preparation()
+        except:
+            return "wrong number of bins"
         self.attributes.pop("class")
+        return "all good"
